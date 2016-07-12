@@ -1,0 +1,86 @@
+* ob-ipythonによるjupyter
+
+[[https://github.com/gregsexton/ob-ipython][ob-ipythonを利用することで]] 、org-modeのコードブロックを利用して、pythonをinlineでかける.
+
+#+BEGIN_SRC ipython :session :file /tmp/u4ks2.png :exports both
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.random.rand(100)
+x2 = np.random.rand(100)
+y = np.random.rand(100)
+y2 = np.random.rand(100)
+fig, ax = plt.subplots(facecolor='white')
+ax.set_xlabel('$x$')
+ax.set_ylabel('$y$')
+ax.set_title('Foo')
+ax.scatter(x, y, label='data1', c='red')
+ax.scatter(x2, y2, label='data2', c='blue')
+ax.legend(loc='upper left')
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/u4ks2.png]]
+
+ポイントは、=plt.subplots(facecolor='white')=.
+これをいれることで、emacsの背景色によらずに、x, y軸のラベルなどを白にできる。
+
+画像の表示。
+#+BEGIN_SRC ipython :session :file /tmp/pvy4z.png :exports both
+from PIL import Image # pip install Pillow
+import requests
+from StringIO import StringIO
+
+response = requests.get("http://www.google.com/logos/doodles/2015/googles-new-logo-5078286822539264.3-hp2x.gif")
+Image.open(StringIO(response.content))
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/pvy4z.png]]
+
+
+おすすめの便利関数
+#+BEGIN_SRC emacs-lisp
+
+(setq org-confirm-babel-evaluate nil)
+(defun random-alnum ()
+  (let* ((alnum "abcdefghijklmnopqrstuvwxyz0123456789")
+         (i (% (abs (random)) (length alnum))))
+    (substring alnum i (1+ i))))
+
+(defun org-babel-tangle-and-execute ()
+  (interactive)
+  (org-babel-tangle)
+  (org-babel-execute-buffer)
+  (org-display-inline-images))
+
+(defun org-ipython-insert-initial-setting ()
+  (interactive)
+  (insert "#+BEGIN_SRC ipython :session\n")
+  (insert "%matplotlib inline\n")
+  (insert "#+END_SRC\n")
+  )
+
+(defun org-ipython-insert-matplotlib-block ()
+  (interactive)
+  (let ((random-png-file (format "/tmp/%s%s%s%s%s.png"
+                                 (random-alnum)
+                                 (random-alnum)
+                                 (random-alnum)
+                                 (random-alnum)
+                                 (random-alnum))))
+    (if (not (file-exists-p random-png-file))
+        (progn
+          (insert (format "#+BEGIN_SRC ipython :session :file %s :exports both\n"
+                          random-png-file))
+          (insert "#+END_SRC\n")))
+    ))
+
+(define-key org-mode-map (kbd "C-c C-i") 'org-ipython-insert-matplotlib-block)
+(define-key org-mode-map (kbd "C-x C-e") 'org-babel-tangle-and-execute)
+#+END_SRC
+
+#+RESULTS:
+: org-babel-tangle-and-execute
