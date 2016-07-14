@@ -1,5 +1,7 @@
 * opencv+ob-ipythonのサンプル
 
+** 初期化
+
 #+BEGIN_SRC ipython :session
 %matplotlib inline
 import numpy as np
@@ -10,7 +12,7 @@ import matplotlib.pyplot as plt
 
 #+RESULTS:
 
-まずは適当に画像を読み込んでみる。
+** まずは適当に画像を読み込んでみる。
 #+BEGIN_SRC ipython :session :file /tmp/3mzy3.png :exports both
 from PIL import Image # pip install Pillow
 import requests
@@ -24,8 +26,7 @@ img
 #+RESULTS:
 [[file:/tmp/3mzy3.png]]
 
-
-エッジ検出
+** エッジ検出
 #+BEGIN_SRC ipython :session :file /tmp/4buzv.png :exports both
 # convert PIL image to numpy array
 image = np.asarray(img)
@@ -36,7 +37,7 @@ Image.fromarray(edges)
 #+RESULTS:
 [[file:/tmp/4buzv.png]]
 
-いろんなパラメータを試してみる
+** いろんなパラメータを試してみる
 #+BEGIN_SRC ipython :session :file /tmp/detky.png :exports both
 all_edge = None
 width = image.shape[0]
